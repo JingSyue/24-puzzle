@@ -1,16 +1,57 @@
 import random
+import re
+from collections import Counter
+from asteval import Interpreter
 import openpyxl
 from pprint import pprint
-from asteval import Interpreter
 from copy import deepcopy
 
 aeval = Interpreter()
 
+# 存储用户的题目状态
+user_sessions = {}
+
 # 预先定义的关卡，每个关卡是一组数字
 levels = {
-    'newbie': [[1,1,2,8],[1,1,1,8],[1,1,2,9],[1,1,2,10]],
-    'veteran': [[1,1,1,11],[1,1,2,11],[1,1,11,11]]
+    'newbie': [[1, 1, 2, 8], [1, 1, 1, 8], [1, 1, 2, 9], [1, 1, 2, 10]],
+    'veteran': [[1, 1, 1, 11], [1, 1, 2, 11], [1, 1, 11, 11]]
 }
+
+def preprocess_input(user_input):
+    # 替换用户输入的特殊字符
+    user_input = user_input.replace('x', '*').replace('÷', '/')
+    # 移除可能的恶意代码
+    user_input = re.sub(r"[^\d\+\-\*\/\(\)\s]", "", user_input)
+    return user_input
+
+def validate_numbers(user_input, level_numbers):
+    input_numbers = [int(num) for num in re.findall(r'\d+', preprocess_input(user_input))]
+    input_count = Counter(input_numbers)
+    level_count = Counter(level_numbers)
+    for num, count in input_count.items():
+        if count > level_count.get(num, 0):
+            return False
+    return True
+
+def check_solution(user_input, level_numbers):
+    if not validate_numbers(user_input, level_numbers):
+        return False, "Invalid input: Numbers don't match the question or used too many times."
+    try:
+        result = aeval(preprocess_input(user_input))
+        return result == 24, "Correct!" if result == 24 else "Incorrect. The result is not 24."
+    except Exception as e:
+        return False, f"There was an error with your input: {e}"
+
+def get_random_question(user_id, level):
+    if user_id not in user_sessions:
+        user_sessions[user_id] = deepcopy(levels)
+    available_questions = user_sessions[user_id][level]
+    if not available_questions:
+        return None, "No questions available for the selected level."
+    question = random.choice(available_questions)
+    available_questions.remove(question)
+    return question, "Please enter a solution that evaluates to 24."
+
 
 ### to be edit
 def load_levels_from_excel(file_path):
@@ -45,55 +86,3 @@ def load_levels_from_excel(file_path):
         if len(level) == 4:
             print(level)  # 在终端打印数组
             levels['veteran'].append(level)  # 可选：添加到levels字典中
-    
-
-
-def check_solution(user_input, level_numbers):
-    user_input = preprocess_input(user_input)  # 预处理用户输入
-    try:
-        result = aeval(user_input)
-        if result == 24:
-            print("Correct!")
-            return True
-        else:
-            print("Incorrect. The result is not 24.")
-            return False
-    except Exception as e:
-        print("There was an error with your input: ", e)
-        return False
-
-def preprocess_input(user_input):
-    # 替换用户输入的特殊字符
-    return user_input.replace('x', '*').replace('÷', '/')
-
-
-def start_game():
-    # 为当前玩家复制一份独立的关卡列表
-    player_levels = deepcopy(levels)
-
-    for level in ['newbie', 'veteran']:
-        questions = random.sample(player_levels[level], k=3 if level == 'newbie' else 2)
-        for question in questions:
-            print(f"The numbers are: {question}. Please enter a solution that evaluates to 24.")
-            attempts = 0
-            user_inputs = []
-
-            while attempts < 3:
-                user_input = input("Your solution: ")
-                user_inputs.append(user_input)
-                if check_solution(user_input, question):
-                    break
-                attempts += 1
-
-            if attempts == 3:
-                print("You've used all your attempts. The attempted solutions were: ")
-                print(user_inputs)
-                print("Moving to the next question...")
-
-            # 不需要从player_levels中移除题目，因为每个玩家有独立的副本
-
-# 每次一个新玩家开始游戏，就调用start_game()
-start_game()
-
-
-
