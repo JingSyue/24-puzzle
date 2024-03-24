@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import game_logic
 import uuid
 
 app = Flask(__name__)
+CORS(app)
+
 @app.route('/', methods=['GET'])
 def game_intro():
     return jsonify({"message": "Welcome to 24 point game"})
