@@ -42,47 +42,63 @@ def check_solution(user_input, level_numbers):
     except Exception as e:
         return False, f"There was an error with your input: {e}"
 
+# 按难度范围组织题目的函数
+def organize_levels_by_difficulty(levels):
+    # 假设 levels 已经按解题数量从高到低排序
+    # 分组的大小
+    group_size = 10
+    organized_levels = []
+    for i in range(0, len(levels), group_size):
+        group = levels[i:i+group_size]
+        organized_levels.append(group)
+    return organized_levels
+
+# 更新 load_levels_from_excel 函数以使用新的组织方式
+def load_levels_from_excel(file_path):
+    workbook = openpyxl.load_workbook(file_path)
+    sheet = workbook.active
+    temp_levels = []
+
+    for row in sheet.iter_rows(min_row=1):
+        level = []
+        solutions_count = 0
+        for i, cell in enumerate(row[:5]):
+            if i < 4 and isinstance(cell.value, (int, float)):
+                level.append(cell.value)
+            elif i == 4:
+                solutions_count = cell.value
+        if len(level) == 4 and isinstance(solutions_count, int):
+            temp_levels.append((level, solutions_count))
+    
+    # 排序
+    temp_levels.sort(key=lambda x: x[1])
+    
+    # 使用组织好的难度层次替换 levels['newbie']
+    levels['newbie'] = organize_levels_by_difficulty([level for level, _ in temp_levels])
+
 def get_random_question(user_id, level):
+    load_levels_from_excel('level.xlsx')
     if user_id not in user_sessions:
         user_sessions[user_id] = deepcopy(levels)
-    available_questions = user_sessions[user_id][level]
-    if not available_questions:
+    
+    if level not in user_sessions[user_id] or not user_sessions[user_id][level]:
         return None, "No questions available for the selected level."
-    question = random.choice(available_questions)
-    available_questions.remove(question)
-    return question, "Please enter a solution that evaluates to 24."
-
-
-### to be edit
-def load_levels_from_excel(file_path):
-    # 打开Excel文件
-    workbook = openpyxl.load_workbook(file_path)
-    # 选择活动的工作表
-    sheet = workbook.active
-
-    # 遍历工作表的每一行
-    for row in sheet.iter_rows(min_row=4):  # 假设第一行是标题，从第二行开始读取
-        level = []
-        # 读取前四列的数据
-        
-        for cell in row[:4]:
-            # 假设我们只关心数值
-            if isinstance(cell.value, (int, float)) and row[5] is not None:
-                print(row[5])
-                level.append(cell.value)
-        # 确保该行有四个数字
-        if len(level) == 4:
-            print(level)  # 在终端打印数组
-            levels['newbie'].append(level)  # 可选：添加到levels字典中
-            
-    for row in sheet.iter_rows(min_row=4):  # 假设第一行是标题，从第二行开始读取
-        level = []
-        # 读取前四列的数据
-        for cell in row[8:12]:
-            # 假设我们只关心数值
-            if isinstance(cell.value, (int, float)) and row[13] is not None:
-                level.append(cell.value)
-        # 确保该行有四个数字
-        if len(level) == 4:
-            print(level)  # 在终端打印数组
-            levels['veteran'].append(level)  # 可选：添加到levels字典中
+    
+    # 获取当前用户可答的所有题目分组
+    difficulty_ranges = user_sessions[user_id][level]
+    
+    if not difficulty_ranges:
+        return None, "All questions have been answered."
+    
+    # 优先选择解答数量多的题目组
+    for questions_in_range in difficulty_ranges:
+        if questions_in_range:
+            # 从当前题目组随机选择一个题目
+            question_index = random.randint(0, len(questions_in_range) - 1)
+            question = questions_in_range.pop(question_index)
+            # 如果当前题目组为空，则从难度范围列表中移除
+            if not questions_in_range:
+                difficulty_ranges.remove(questions_in_range)
+            return question, "Please enter a solution that evaluates to 24."
+    
+    return None, "No questions available for the selected level."
