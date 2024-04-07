@@ -1,0 +1,47 @@
+/* styles/forest.module.css */
+.blinkText {
+  animation: blinker 1.5s linear infinite;
+  color: rgba(255, 255, 255, 0.5); /* 可以根据需要调整颜色和透明度 */
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px; /* 增加字体大小 */
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加文本阴影 */
+  text-align: center; /* 居中对齐文本 */
+  max-width: 600px; /* 最大宽度，以确保在屏幕较窄时文本能够适当换行 */
+}
+
+@keyframes blinker {
+  50% {
+      opacity: 0;
+  }
+}
+
+.fadeIn {
+  animation: fadeInEase 2s ease-out forwards;
+
+}
+
+@keyframes fadeInEase {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
+}
+
+.introText {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 24px; /* 增加字体大小 */
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 添加文本阴影 */
+    text-align: center; /* 居中对齐文本 */
+    max-width: 600px; /* 最大宽度，以确保在屏幕较窄时文本能够适当换行 */
+  }
+  
+
+  

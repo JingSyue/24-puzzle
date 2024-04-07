@@ -35,12 +35,12 @@ def validate_numbers(user_input, level_numbers):
 
 def check_solution(user_input, level_numbers):
     if not validate_numbers(user_input, level_numbers):
-        return False, "Invalid input: Numbers don't match the question or used too many times."
+        return False, "數字與題目不符，每個數字僅能出現一次"
     try:
         result = aeval(preprocess_input(user_input))
-        return result == 24, "Correct!" if result == 24 else "Incorrect. The result is not 24."
+        return result == 24, "正確!" if result == 24 else "錯誤! 運算結果不是24"
     except Exception as e:
-        return False, f"There was an error with your input: {e}"
+        return False, f"錯誤 {e}"
 
 # 按难度范围组织题目的函数
 def organize_levels_by_difficulty(levels):
@@ -82,13 +82,13 @@ def get_random_question(user_id, level):
         user_sessions[user_id] = deepcopy(levels)
     
     if level not in user_sessions[user_id] or not user_sessions[user_id][level]:
-        return None, "No questions available for the selected level."
+        return None, "無此等級"
     
     # 获取当前用户可答的所有题目分组
     difficulty_ranges = user_sessions[user_id][level]
     
     if not difficulty_ranges:
-        return None, "All questions have been answered."
+        return None, "所有關卡皆已破關"
     
     # 优先选择解答数量多的题目组
     for questions_in_range in difficulty_ranges:
@@ -99,6 +99,6 @@ def get_random_question(user_id, level):
             # 如果当前题目组为空，则从难度范围列表中移除
             if not questions_in_range:
                 difficulty_ranges.remove(questions_in_range)
-            return question, "Please enter a solution that evaluates to 24."
+            return question, "利用四則運算使運算結果為24"
     
-    return None, "No questions available for the selected level."
+    return None, "無此等級"

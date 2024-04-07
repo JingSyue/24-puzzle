@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* 使用视窗高度，确保容器充满整个屏幕 */
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100vh) scale(0.5); /* 从屏幕底部开始，初始缩放为0.5 */
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1); /* 结束时回到原始大小 */
+    opacity: 1;
+  }
+}
+
+.flyIn {
+  animation: slideUp 1s ease-out forwards;
+  width: 50%; /* 或者你想要的任何宽度，使图片不至于太大 */
+  max-width: 292px; /* 限制图片的最大宽度 */
+}
