@@ -66,7 +66,7 @@ export default function Game() {
   const router = useRouter();
 
   useEffect(() => {
-    if (collectedElves.length === 24) {
+    if (collectedElves.length === 3) {
       router.push('/forest');
     }
   }, [collectedElves, router]);
@@ -81,13 +81,14 @@ export default function Game() {
 
   const handleFetchQuestion = async () => {
     const data = await fetchQuestion(userId);
-    setUserId(data.user_id);
-    setNumbers(data.numbers);
-    setMessage(data.message);
-    setIsStarted(true);
-    setIsNext(false);
-    setIsCorrect(false);
-    setShowElfCard(false); // 新题目时不显示Elf卡片
+      setUserId(data.user_id);
+      setNumbers(data.numbers);
+      setMessage(data.message);
+      setIsStarted(true);
+      setIsNext(false);
+      setIsCorrect(false);
+      setShowElfCard(false); // 新题目时不显示Elf卡片
+
   };
 
   const handleSubmitSolution = async () => {
@@ -110,7 +111,15 @@ export default function Game() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4"
+         style={{
+           backgroundImage: "url('images/background.jpg')",
+           backgroundSize: 'cover',
+           backgroundPosition: 'center',
+           backgroundRepeat: 'no-repeat',
+           minHeight: '100vh',  // 確保至少與視口高度一致
+           minWidth:'100vw'
+         }}>
       <div className="mt-10 sm:mt-20">
         <h1 className="text-4xl font-bold mb-8">歡迎來到24號魔法森林!</h1>
         <p className="text-lg font-semibold">{numbers.join(', ')}</p>
