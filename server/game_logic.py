@@ -1,3 +1,4 @@
+#/server/game_logic.py
 import random
 import re
 from collections import Counter
@@ -8,13 +9,13 @@ from copy import deepcopy
 
 aeval = Interpreter()
 
-# 存储用户的题目状态
+
 user_sessions = {}
 
 # 预先定义的关卡，每个关卡是一组数字
 levels = {
-    'newbie': [[1, 1, 2, 8], [1, 1, 1, 8], [1, 1, 2, 9], [1, 1, 2, 10]],
-    'veteran': [[1, 1, 1, 11], [1, 1, 2, 11], [1, 1, 11, 11]]
+    'easy': [],
+    'hard': []
 }
 
 def preprocess_input(user_input):
@@ -74,10 +75,15 @@ def load_levels_from_excel(file_path):
     temp_levels.sort(key=lambda x: x[1])
     
     # 使用组织好的难度层次替换 levels['newbie']
-    levels['newbie'] = organize_levels_by_difficulty([level for level, _ in temp_levels])
+    levels['easy'] = organize_levels_by_difficulty([level for level, _ in temp_levels])
+    levels['hard'] = organize_levels_by_difficulty([level for level, _ in temp_levels])
 
 def get_random_question(user_id, level):
-    load_levels_from_excel('level.xlsx')
+    if level=="easy":
+        load_levels_from_excel('easy.xlsx')
+    elif level=="hard":
+        load_levels_from_excel('hard.xlsx')
+        
     if user_id not in user_sessions:
         user_sessions[user_id] = deepcopy(levels)
     

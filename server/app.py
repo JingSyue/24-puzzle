@@ -1,3 +1,4 @@
+#/server/app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import game_logic
@@ -14,9 +15,8 @@ def game_intro():
 def start_game():
     user_id = request.args.get('user_id')
     if not user_id:
-        # 为新用户生成一个UUID
         user_id = str(uuid.uuid4())
-    level = request.args.get('level', 'newbie')
+    level = request.args.get('level', 'easy')
     question, message = game_logic.get_random_question(user_id, level)
     return jsonify({"user_id": user_id, "numbers": question, "message": message})
 
