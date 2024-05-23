@@ -1,4 +1,3 @@
-// services/gameService.js
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000';
@@ -11,10 +10,15 @@ export async function fetchQuestion(userId, level) {
 }
 
 export async function submitSolution(userId, solution, numbers) {
-  const response = await axios.post(`${API_BASE_URL}/submit`, {
-    user_id: userId,
-    solution: solution,
-    numbers: numbers
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${API_BASE_URL}/submit`, {
+      user_id: userId,
+      solution: solution,
+      numbers: numbers
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting solution:', error);
+    throw error;
+  }
 }

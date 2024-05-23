@@ -16,6 +16,8 @@ export default function Game() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [collectedElves, setCollectedElves] = useState([]);
   const [showElfCard, setShowElfCard] = useState(false);
+  const [inputHistory, setInputHistory] = useState([]); 
+  const [errorCount, setErrorCount] = useState(0); 
   const router = useRouter();
 
   useEffect(() => {
@@ -45,12 +47,21 @@ export default function Game() {
     const data = await submitSolution(userId, solution, numbers);
     setMessage(data.message);
     setIsCorrect(data.correct);
+    setInputHistory(data.input_history);
     if (data.correct) {
       setSolution('');
       setIsNext(true);
       setShowElfCard(true);
       const newElf = `elf${Math.floor(Math.random() * 24) + 1}.png`;
       setCollectedElves(prev => [...prev, newElf]);
+      setErrorCount(0); 
+    } else {
+      setErrorCount(prev => prev + 1);
+      if (errorCount + 1 >= 3) {
+        setTimeout(() => {
+          handleNextQuestion();
+        }, 3000); 
+      }
     }
   };
 
@@ -60,13 +71,17 @@ export default function Game() {
     const data = await fetchQuestion(userId, level);  // Fetch new question logic
     setNumbers(data.numbers);
     setMessage(data.message);
+    setInputHistory([]);  // Reset input history for the new question
     setIsCorrect(false);  // Reset correctness check
+    setErrorCount(0);  // 重置错误次数
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4" style={{ backgroundImage: "url('images/background.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', minHeight: '100vh', minWidth: '100vw' }}>
-      <div className="mt-10 sm:mt-20">
-        <h1 className="text-4xl font-bold mb-8">歡迎來到24號魔法森林!</h1>
+    <div className="flex flex-col items-center justify-start min-h-screen p-4 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('images/background.jpg')", minHeight: '100vh', minWidth: '100vw' }}>
+      <div className="mt-4 sm:mt-8 lg:mt-16 xl:mt-24">
+        <h1 className="text-4xl sm:text-6xl font-bold mb-8 text-white shadow-lg p-4 bg-opacity-60 bg-black rounded-lg" style={{ backdropFilter: 'blur(5px)' }}>
+          歡迎來到24號魔法森林!
+        </h1>
         {!isStarted && <LevelSelector setLevel={handleLevelChange} />}
         {isStarted && (
           <>
@@ -77,10 +92,19 @@ export default function Game() {
               isNext={isNext}
               solution={solution}
               setSolution={setSolution}
-              handleStart={() => {}}
+              handleStart={() => { }}
               handleSubmit={handleSubmitSolution}
               handleNext={handleNextQuestion}
             />
+            <div className="mt-4">
+              <h2 className="text-2xl font-bold">歷史紀錄</h2>
+              {inputHistory.map((entry, index) => (
+                <div key={index}>
+                  <p>輸入: {entry.solution}</p>
+                  <p>結果: {entry.message}</p>
+                </div>
+              ))}
+            </div>
           </>
         )}
       </div>
