@@ -10,6 +10,11 @@
   },
   "dependencies": {
     "@bsmnt/scrollytelling": "^0.3.3",
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@react-three/drei": "^9.105.6",
+    "@react-three/fiber": "^8.16.6",
     "@splinetool/react-spline": "^2.2.6",
     "@studio-freight/lenis": "^1.0.42",
     "axios": "^1.6.8",

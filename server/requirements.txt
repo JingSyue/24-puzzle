@@ -1,4 +1,4 @@
-Flask
-Flask-CORS
-openpyxl
-asteval
+Flask==2.0.1
+Flask-Cors==3.0.10
+asteval==0.9.23
+openpyxl==3.0.7

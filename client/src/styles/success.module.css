@@ -1,0 +1,30 @@
+.success-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .next-button {
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .next-button:hover {
+    background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+  }
+  
+  .next-button:active {
+    background: linear-gradient(135deg, #3e8e41 0%, #45a049 100%);
+    transform: scale(0.98);
+  }
+    

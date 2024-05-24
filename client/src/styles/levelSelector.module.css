@@ -1,0 +1,24 @@
+.level-selector {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.level-button {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.level-button:hover {
+  background-color: #45a049;
+}
+
+.level-button:active {
+  background-color: #3e8e41;
+}
